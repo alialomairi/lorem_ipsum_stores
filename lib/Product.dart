@@ -1,7 +1,6 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-import '';
+
 
 class Product {
   final String name;
@@ -14,10 +13,18 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
         json['title'],
-        json['description'],
-        json['price'],
-        'laptop.jpg'
+        json['description']??'',
+        json['price']??0,
+        json['thumbnail']??''
     );
+  }
+  Map<String, dynamic> toMap() {
+    return  <String, dynamic>{
+      'title': name,
+      'description': description,
+      'price':price,
+      'thumbnail':image
+     };
   }
 
   static Future<List<Product>> getProducts() async {
@@ -44,11 +51,11 @@ class Product {
 
   static Future<Product> addProduct(Product product) async {
     final response = await http.post(
-      Uri.parse('https://dummyjson.com/products'),
+      Uri.parse('https://dummyjson.com/products/add'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(product),
+      body: jsonEncode(product.toMap()),
     );
 
     if (response.statusCode == 200) {
