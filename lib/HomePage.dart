@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lorem_ipsum_stores/LoginPage.dart';
+import 'package:lorem_ipsum_stores/ProductsPage.dart';
 import 'package:lorem_ipsum_stores/RegisterPage.dart';
+
+import 'ProductEdit.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,11 +17,11 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.deepPurple,
         title: const Text('HomePage'),
         actions: [
           TextButton(
               onPressed: (){
-                Navigator.push( context, MaterialPageRoute(builder: (context) => const LoginPage()), );
               },
               child: const Text('Login')
           ),
@@ -30,7 +33,22 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body:  const Text('This is the Home Page'),
+      body: Column(
+        children: [
+          TextButton(
+            onPressed: (){
+              Navigator.push( context, MaterialPageRoute(builder: (context) => const ProductsPage()), );
+            },
+            child: Text('Products'),
+          ),
+          TextButton(
+            onPressed: (){
+              Navigator.push( context, MaterialPageRoute(builder: (context) => const ProductEdit()), );
+            },
+            child: Text(' add Product'),
+          ),
+        ],
+      )
     );
   }
 }
