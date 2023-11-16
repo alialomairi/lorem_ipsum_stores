@@ -1,14 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:lorem_ipsum_stores/Product.dart';
 
-class ProductEdit extends StatefulWidget {
-  const ProductEdit({super.key});
+class ProductEdit extends StatelessWidget {
+  ProductEdit({super.key, this.item});
 
-  @override
-  State<ProductEdit> createState() => _ProductEditState();
-}
-
-class _ProductEditState extends State<ProductEdit> {
+  final Product? item;
   final TextEditingController txtName = TextEditingController();
   final TextEditingController txtDescription = TextEditingController();
   final TextEditingController txtPrice = TextEditingController();
@@ -32,17 +30,18 @@ class _ProductEditState extends State<ProductEdit> {
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextField(
-                controller: txtName,
+                controller: txtName..text = item?.name??'',
                 decoration: const InputDecoration(
                     label: Text('Name'),
                     border:  OutlineInputBorder()
                 ),
+
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextField(
-                controller: txtDescription,
+                controller: txtDescription..text = item?.description??'',
                 decoration: const InputDecoration(
                     label: Text('Description'),
                     border:  OutlineInputBorder()
@@ -52,7 +51,7 @@ class _ProductEditState extends State<ProductEdit> {
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextField(
-                controller: txtPrice,
+                controller: txtPrice..text = item?.price.toString()??'',
                 decoration:const  InputDecoration(
                     label: Text('Price'),
                     border:  OutlineInputBorder()
@@ -62,7 +61,7 @@ class _ProductEditState extends State<ProductEdit> {
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextField(
-                controller: txtImage,
+                controller: txtImage..text = item?.image??'',
                 decoration:const  InputDecoration(
                     label: Text('Image'),
                     border:  OutlineInputBorder()
@@ -80,26 +79,52 @@ class _ProductEditState extends State<ProductEdit> {
                       txtImage.value.text
                   );
 
-                  Product.addProduct(product)
-                      .then((value){
-
-                    showDialog(
-                      context: context,
-                      builder: (builder)=>
-                          AlertDialog(
-                              title:const Text('Successful Save'),
-                              content: const Text('The product wes saved successfully.'),
-                              actions: [
-                                TextButton(
-                                    onPressed: ()=>Navigator.pop(context, 'OK'),
-                                    child: const Text('OK')
-                                )
-                              ]
-                          ),
-                    );
-                  });
-
-                    },
+                  if(item==null) {
+                    Product.addProduct(product)
+                        .then((value) {
+                      showDialog(
+                        context: context,
+                        builder: (builder) =>
+                            AlertDialog(
+                                title: const Text('Successful Save'),
+                                content: const Text(
+                                    'The product wes saved successfully.'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'OK'),
+                                      child: const Text('OK')
+                                  )
+                                ]
+                            ),
+                      );
+                    }).catchError((error) {
+                      showDialog(
+                        context: context,
+                        builder: (builder) =>
+                            AlertDialog(
+                                title: const Text('Successful Save'),
+                                content: const Text(
+                                    'The product wes saved successfully.'),
+                                actions: [
+                                  TextButton(
+                                      onPressed: () =>
+                                          Navigator.pop(context, 'OK'),
+                                      child: const Text('OK')
+                                  )
+                                ]
+                            ),
+                      );
+                    });
+                  }
+                  else{
+                    const String key = '858';
+                    Product.getProduct(key)
+                    .then((p){
+                      debugPrint(p.toMap().toString());
+                    });
+                  }
+                },
                 child: const Text('Register'),
               ) ,
             ),

@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -31,49 +33,62 @@ class _LoginPageState extends State<LoginPage> {
               child: TextField(
                 controller: txtUsername,
                 decoration: const InputDecoration(
-                    label: Text('UserName'),
-                    border:  OutlineInputBorder()
-                ),
+                    label: Text('UserName'), border: OutlineInputBorder()),
               ),
             ),
             Padding(
               padding: EdgeInsets.all(15),
               child: TextField(
                 controller: txtPassword,
-                decoration:const  InputDecoration(
-                    label: Text('Password'),
-                    border:  OutlineInputBorder()
-                ),
+                decoration: const InputDecoration(
+                    label: Text('Password'), border: OutlineInputBorder()),
                 obscureText: true,
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(15),
               child: ElevatedButton(
-                onPressed: (){
+                onPressed: () async {
                   String username = txtUsername.value.text;
                   String password = txtPassword.value.text;
-                  if( username == 'ali' && password == '123') {
+
+                  try {
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: username, password: password);
                     Navigator.pop(context);
-                  }
-                  else{
+                  } on FirebaseAuthException catch (e) {
+                    if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
+
+                      showDialog(
+                          context: context,
+                          builder: (builder) => AlertDialog(
+                            title: const Text('Login failure'),
+                            content:  Text(e.message??'his'),
+                            actions: [
+                              TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, 'OK'),
+                                  child: const Text('OK'))
+                            ],
+                          ));
+                    }
+                  } catch (e) {
                     showDialog(
                         context: context,
-                        builder: (builder)=>
-                            AlertDialog(
-                              title:const Text('Login failure'),
-                              content: const Text('Username or password is not correct.'),
-                              actions: [
-                                TextButton(
-                                    onPressed: ()=>Navigator.pop(context, 'OK'),
-                                    child: const Text('OK')
-                                )
-                              ],
-                    ));
+                        builder: (builder) => AlertDialog(
+                          title: const Text('Login failure'),
+                          content:  Text('his'),
+                          actions: [
+                            TextButton(
+                                onPressed: () =>
+                                    Navigator.pop(context, 'OK'),
+                                child: const Text('OK'))
+                          ],
+                        ));
                   }
                 },
                 child: const Text('Login'),
-              ) ,
+              ),
             ),
           ],
         ),

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lorem_ipsum_stores/Product.dart';
 import 'package:lorem_ipsum_stores/ProductBox.dart';
-import 'package:lorem_ipsum_stores/ProductPage.dart';
+import 'package:lorem_ipsum_stores/ProductEdit.dart';
+
 
 class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
@@ -11,7 +12,6 @@ class ProductsPage extends StatefulWidget {
 }
 
 class _ProductsPageState extends State<ProductsPage> {
-  final items = Product.getProducts();
   late Future<List<Product>> productsLate;
   @override
   void initState() {
@@ -21,7 +21,7 @@ class _ProductsPageState extends State<ProductsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Product Navigation")),
+        appBar: AppBar(title: const Text("Product List")),
         body: FutureBuilder<List<Product>>(
           future: productsLate,
           builder: (context, snapshot) {
@@ -35,7 +35,7 @@ class _ProductsPageState extends State<ProductsPage> {
                   onTap: () {
                     Navigator.push(
                       context, MaterialPageRoute(
-                        builder: (context) => ProductPage(item: items[index]),
+                        builder: (context) => ProductEdit(item: items[index]),
                       ),
                     );
                   },

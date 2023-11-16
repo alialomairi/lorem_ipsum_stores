@@ -4,7 +4,6 @@ import 'package:lorem_ipsum_stores/Product.dart';
 class ProductPage extends StatelessWidget {
   ProductPage({key,required this.item}) : super(key: key);
   final Product item;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

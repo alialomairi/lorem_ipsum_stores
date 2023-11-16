@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
 
 
 class Product {
+  String? key;
   final String name;
   final String description;
   final int price;
@@ -18,7 +20,16 @@ class Product {
         json['thumbnail']??''
     );
   }
-  Map<String, dynamic> toMap() {
+
+  factory  Product.fromMap(Map<Object?, Object?> json) {
+    return Product(
+        json['title'].toString()??'',
+        json['description'].toString()??'',
+        int.parse(json['price'].toString()??''),
+        json['thumbnail'].toString()??''
+    );
+  }
+Map<String, dynamic> toMap() {
     return  <String, dynamic>{
       'title': name,
       'description': description,
@@ -50,24 +61,20 @@ class Product {
   }
 
   static Future<Product> addProduct(Product product) async {
-    final response = await http.post(
-      Uri.parse('https://dummyjson.com/products/add'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(product.toMap()),
-    );
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
+    String? key = ref.child("products").push().key;
+    await ref.child("products/$key").set(product.toMap());
+    product.key = key;
+    return product;
+  }
+  static Future<Product> getProduct(String key) async {
+    DatabaseReference ref = FirebaseDatabase.instance.ref();
 
-    if (response.statusCode == 200) {
-      // If the server did return a 200 OK response,
-      // then parse the JSON.
+    final DataSnapshot snapshot = await ref.child("products/$key").get();
+    final value = snapshot.value as Map<Object?,Object?>;
 
-      var jsonMap = jsonDecode(response.body) as Map<String, dynamic>;
-      return Product.fromJson(jsonMap);
-    } else {
-      // If the server did not return a 200 OK response,
-      // then throw an exception.
-      throw Exception('Failed to load album');
-    }
+
+     return Product.fromMap(value);
+    // return snapshot.value as Product;
   }
 }
